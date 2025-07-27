@@ -1,0 +1,31 @@
+Metadata-Version: 2.4
+Name: cleanframe
+Version: 0.1.0
+Summary: A Python library for cleaning and validating pandas DataFrames.
+Home-page: https://github.com/fayezhesham/cleanframe
+Author: Fayez Hesham
+Author-email: fayezhesham510@gmail.com
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Framework :: Pandas
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+Requires-Dist: pandas>=1.0.0
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
+
+# CleanFrame
+
+A Python library for robust cleaning and validation of pandas DataFrames.
+
