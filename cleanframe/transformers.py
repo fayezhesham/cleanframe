@@ -59,5 +59,7 @@ def apply_constraints(df: pd.DataFrame, col: str, rule: ColumnRule, report: list
             else:
                 df.loc[not_allowed, col] = rule.fillna
                 log_info(f"Replaced {not_allowed.sum()} disallowed value(s) in '{col}' with {rule.fillna}.", report)
+        df[col] = pd.Categorical(df[col], categories=rule.allowed_values)
+        df[col] = df[col].cat.remove_unused_categories()
 
     return df, rows_to_drop

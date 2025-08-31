@@ -6,13 +6,14 @@ class ColumnRule:
     dtype: Optional[str] = None
     allow_null: bool = True
     drop_if_invalid: bool = False
-    fillna: Optional[Any] = None
+    fillna: Optional[Any] = None  # can be value OR "mean"/"median"/"min"/"max"
     min: Optional[Union[int, float]] = None
     max: Optional[Union[int, float]] = None
     allowed_values: Optional[List[Any]] = None
+    regex: Optional[str] = None  # NEW: regex validation for string values
     custom_validator: Optional[Callable[[Any, Dict[str, Any]], bool]] = None
-    unique: bool = False  # NEW: Ensure column has unique values
-    resolve_duplicates: Optional[Callable[[Any], Any]] = None  # NEW: Custom deduplication logic
+    unique: bool = False
+    resolve_duplicates: Optional[Callable[[Any], Any]] = None
 
 @dataclass
 class Schema:

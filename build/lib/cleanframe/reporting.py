@@ -35,10 +35,15 @@ def log_duplicates_found(column: str, count: int, report: List[str]):
     message = f"Found {count} duplicate value(s) in column '{column}'."
     logger.warning(message)
     report.append(message)
-    # console.log(f"[yellow]{message}")
 
 def log_duplicates_removed(column: str, removed_count: int, report: List[str]):
     message = f"Marked {removed_count} duplicate row(s) in column '{column}' for removal, keeping only unique entries."
     logger.info(message)
+    report.append(message)
+    console.log(f"[yellow]{message}")
+
+def log_regex_invalid(column: str, count: int, report: List[str]):
+    message = f"{count} value(s) in column '{column}' failed regex validation."
+    logger.warning(message)
     report.append(message)
     console.log(f"[yellow]{message}")
