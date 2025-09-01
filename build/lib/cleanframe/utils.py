@@ -7,7 +7,7 @@ def apply_custom_validator(df: pd.DataFrame, col: str, rule: ColumnRule, report:
 
     if rule.custom_validator:
         try:
-            invalid = ~df.apply(lambda row: rule.custom_validator(row[col], row), axis=1)
+            invalid = ~df[col].apply(lambda row: rule.custom_validator(row))
             if invalid.sum():
                 if rule.drop_if_invalid:
                     rows_to_drop |= invalid
