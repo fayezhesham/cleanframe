@@ -1,6 +1,6 @@
 import pandas as pd
 import re
-from .schema import ColumnRule
+from .schema import ColumnRule, DataFrameRule
 from .reporting import (
     log_info,
     log_warning,
@@ -11,6 +11,65 @@ from .reporting import (
 from .transformers import convert_dtype, apply_constraints
 from .utils import apply_custom_validator
 
+
+def validate_dataframe(df: pd.DataFrame, df_rule: DataFrameRule, report: list[str]) -> pd.DataFrame:
+    """Validate entire DataFrame according to DataFrameRule."""
+    try:
+        # Row count checks
+        if df_rule.min_rows is not None and len(df) < df_rule.min_rows:
+            log_warning(f"DataFrame has only {len(df)} rows; expected at least {df_rule.min_rows}.", report)
+        if df_rule.max_rows is not None and len(df) > df_rule.max_rows:
+            log_warning(f"DataFrame has {len(df)} rows; exceeds max of {df_rule.max_rows}.", report)
+
+        # Remove duplicates
+        if df_rule.no_duplicates:
+            dup_count = df.duplicated().sum()
+            if dup_count > 0:
+                df = df.drop_duplicates()
+                log_info(f"Removed {dup_count} duplicate row(s).", report)
+
+        # Unique keys check
+        if df_rule.unique_keys:
+            dup_keys = df.duplicated(subset=df_rule.unique_keys).sum()
+            if dup_keys > 0:
+                log_warning(f"Unique key constraint violated: {dup_keys} duplicate(s) found in {df_rule.unique_keys}.", report)
+
+        # Expected columns check
+        if df_rule.expected_columns:
+            missing = [c for c in df_rule.expected_columns if c not in df.columns]
+            extra = [c for c in df.columns if c not in df_rule.expected_columns]
+            if missing:
+                log_warning(f"Missing expected columns: {missing}", report)
+            if extra:
+                log_warning(f"Unexpected extra columns: {extra}", report)
+
+        # Cross validations
+        if df_rule.cross_validations:
+            for check in df_rule.cross_validations:
+                try:
+                    if check.get("type") == "comparison":
+                        cond = check["condition"]
+                        if not df.eval(cond).all():
+                            log_warning(f"Comparison check failed: {cond}", report)
+
+                    elif check.get("type") == "aggregate":
+                        agg_check = check["check"]
+                        if not eval(agg_check):
+                            log_warning(f"Aggregate check failed: {agg_check}", report)
+
+                    elif check.get("type") == "conditional":
+                        if_cond = df.eval(check["if"])
+                        then_cond = df.eval(check["then"])
+                        if not then_cond[if_cond].all():
+                            log_warning(f"Conditional check failed: If ({check['if']}) then ({check['then']})", report)
+
+                except Exception as e:
+                    log_error(f"Error evaluating cross-validation {check}: {e}", report)
+
+    except Exception as e:
+        log_error(f"Unexpected error in DataFrame validation: {e}", report)
+
+    return df
 
 def validate_column(df: pd.DataFrame, col: str, rule: ColumnRule, report: list[str]) -> tuple[pd.DataFrame, pd.Series]:
     rows_to_drop = pd.Series(False, index=df.index)
