@@ -1,5 +1,7 @@
 from typing import Any, Callable, Dict, List, Optional, Union
 from dataclasses import dataclass, field
+from .schema_validator import SchemaValidator, SchemaValidationError
+
 
 @dataclass
 class ColumnRule:
@@ -24,7 +26,7 @@ class DataFrameRule:
     unique_keys: Optional[List[str]] = None
     expected_columns: Optional[List[str]] = None
     cross_validations: Optional[List[Dict[str, Any]]] = None
-    # Example for cross_validations:
+    # Example:
     # [
     #   {"type": "comparison", "condition": "start_date <= end_date"},
     #   {"type": "aggregate", "check": "df['sales'].sum() > 0"},
@@ -37,9 +39,14 @@ class Schema:
     rules: Dict[str, ColumnRule] = field(default_factory=dict)
     dataframe_rule: Optional[DataFrameRule] = None
 
-    def __init__(self, rules: Optional[Dict[str, Union[ColumnRule, Dict[str, Any]]]] = None,
-                 dataframe_rule: Optional[Union[DataFrameRule, Dict[str, Any]]] = None):
+    def __init__(
+        self,
+        rules: Optional[Dict[str, Union[ColumnRule, Dict[str, Any]]]] = None,
+        dataframe_rule: Optional[Union[DataFrameRule, Dict[str, Any]]] = None
+    ):
         self.rules = {}
+
+        # Convert column rules
         if rules:
             for col_name, rule in rules.items():
                 if isinstance(rule, dict):
@@ -50,6 +57,7 @@ class Schema:
                     raise ValueError(f"Invalid rule type for column '{col_name}': {type(rule)}")
                 self.add_column_rule(col_name, rule_obj)
 
+        # Convert dataframe rule
         if dataframe_rule:
             if isinstance(dataframe_rule, dict):
                 self.dataframe_rule = DataFrameRule(**dataframe_rule)
@@ -57,6 +65,11 @@ class Schema:
                 self.dataframe_rule = dataframe_rule
             else:
                 raise ValueError(f"Invalid dataframe_rule type: {type(dataframe_rule)}")
+
+        SchemaValidator.validate_schema(
+            schema={k: vars(v) for k, v in self.rules.items()},
+            dataframe_rules=vars(self.dataframe_rule) if self.dataframe_rule else None
+        )
 
     def add_column_rule(self, column_name: str, rule: ColumnRule):
         self.rules[column_name] = rule
