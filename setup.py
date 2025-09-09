@@ -10,6 +10,7 @@ setup(
     long_description_content_type='text/markdown',
     url='https://github.com/fayezhesham/cleanframe',
     packages=find_packages(),
+    install_requires=['pandas'],
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
@@ -17,7 +18,6 @@ setup(
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Libraries :: Python Modules',
-        'Framework :: Pandas',
     ],
     python_requires='>=3.7',
     install_requires=[
