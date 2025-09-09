@@ -242,7 +242,7 @@ def test_df_row_count_bounds_and_cross_validations():
             "cross_validations": [
                 {"type": "comparison", "condition": "start <= end"},
                 {"type": "aggregate",  "check": "df['age'].mean() < 100"},
-                {"type": "conditional","if": "age > 18", "then": "notna(email)"}
+                {"type": "conditional","if": "age > 18", "then": "email.notna()"}
             ]
         }
     )
@@ -253,11 +253,11 @@ def test_df_row_count_bounds_and_cross_validations():
 
     assert any("Comparison check failed: start <= end" in m for m in report)
     assert any("Aggregate check failed: df['age'].mean() < 100" in m for m in report)
-    assert any("Conditional check failed: If (age > 18) then (notna(email))" in m for m in report)
+    assert any("Conditional check failed: If (age > 18) then (email.notna())" in m for m in report)
 
 
 def test_df_min_max_rows_only_warn():
-    df = pd.DataFrame({"x": [1]})
+    df = pd.DataFrame({"x": [1, 2]})
 
     schema = Schema(
         rules={},
@@ -270,6 +270,6 @@ def test_df_min_max_rows_only_warn():
     # This should only WARN, not raise or drop
     cleaned, report = clean_and_validate(df, schema)
 
-    assert len(cleaned) == 1
+    assert len(cleaned) == 2
     assert any("expected at least 5" in m for m in report)
     assert any("exceeds max of 1" in m for m in report)
