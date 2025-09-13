@@ -3,6 +3,7 @@ README.md
 setup.py
 cleanframe/__init__.py
 cleanframe/core.py
+cleanframe/data.py
 cleanframe/reporting.py
 cleanframe/schema.py
 cleanframe/schema_validator.py

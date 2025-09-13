@@ -11,7 +11,6 @@ Classifier: Operating System :: OS Independent
 Classifier: Development Status :: 3 - Alpha
 Classifier: Intended Audience :: Developers
 Classifier: Topic :: Software Development :: Libraries :: Python Modules
-Classifier: Framework :: Pandas
 Requires-Python: >=3.7
 Description-Content-Type: text/markdown
 License-File: LICENSE
