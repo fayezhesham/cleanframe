@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='cleanframe',
-    version='0.1.0',
+    version='0.2.0',
     author='Fayez Hesham',
     author_email='fayezhesham510@gmail.com',
     description='A Python library for cleaning and validating pandas DataFrames.',
