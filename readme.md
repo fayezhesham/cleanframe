@@ -4,7 +4,7 @@
 
 ---
 
-### ✨ Features
+###  Features
 
 * **Schema-based Validation**: Define your data's structure, rules, and constraints in a simple Python dictionary.
 * **Comprehensive Reporting**: Get a detailed report of all validation issues, including which columns or rows were affected.
@@ -14,7 +14,7 @@
 
 ---
 
-### 🚀 Installation
+###  Installation
 
 You can install `cleanframe` directly from PyPI using `pip`:
 
@@ -22,7 +22,7 @@ You can install `cleanframe` directly from PyPI using `pip`:
 pip install cleanframe
 ```
 
-### 📖 Quick Start
+###  Quick Start
 
 Get started in just a few lines of code. The following example demonstrates how to define a schema, validate a sample dataframe, and inspect the results.
 
@@ -129,7 +129,7 @@ print(report)
 print("\nCleaned DataFrame shape:", cleaned_df.shape)
 ```
 
-### 🔧 Schema Definition
+###  Schema Definition
 
 The schema is a Python dictionary that defines the validation rules for your dataframe. It consists of two main parts:
 
@@ -138,10 +138,10 @@ The schema is a Python dictionary that defines the validation rules for your dat
 
 This structure allows for granular control over every aspect of your data's quality.
 
-### 🤝 Contributing
+###  Contributing
 
 We welcome contributions! If you find a bug or have a suggestion, please open an issue or submit a pull request on our GitHub repository.
 
-### 📜 License
+###  License
 
 This project is licensed under the MIT License.
