@@ -1,4 +1,5 @@
 LICENSE
+MANIFEST.in
 README.md
 setup.py
 cleanframe/__init__.py
@@ -15,4 +16,5 @@ cleanframe.egg-info/SOURCES.txt
 cleanframe.egg-info/dependency_links.txt
 cleanframe.egg-info/requires.txt
 cleanframe.egg-info/top_level.txt
+cleanframe/sample_data/retail_store_sales.csv
 tests/test_cleanframe.py
