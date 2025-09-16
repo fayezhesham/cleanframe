@@ -5,7 +5,7 @@ with io.open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
 setup(
     name='cleanframe',
-    version='0.2.3',
+    version='0.2.4',
     author='Fayez Hesham',
     author_email='fayezhesham510@gmail.com',
     description='A Python library for cleaning and validating pandas DataFrames.',

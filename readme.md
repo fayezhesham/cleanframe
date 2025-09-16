@@ -113,7 +113,7 @@ dataframe_rule = {
     "min_rows": 1,
     "unique_keys": ["transaction_id"],
     "no_duplicates": True,
-    "cross_validations": [{"type": "comparison", "condition": "total_spent == price_per_unit * quantity"}]
+    "cross_validations": [{"type": "comparison", "condition": "total_spent == price_per_unit * quantity", "action": "drop"}]
 }
 
 schema = Schema(rules = column_rules, dataframe_rule = dataframe_rule)

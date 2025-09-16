@@ -54,6 +54,13 @@ class SchemaValidator:
                     f"Current dtype: {dtype}"
                 )
 
+            # Enforce action only to be 'warn' or 'drop'
+            if "action" in rules and rules["action"] not in {"warn", "drop"}:
+                raise SchemaValidationError(
+                    f"Column '{col}': 'action' must be either 'warn' or 'drop'. "
+                    f"Got: {rules['action']}"
+                )
+
             # FillNA and Allow Null logic
             if rules.get("allow_null") is False and rules.get("fillna") is None and not rules.get("drop_if_invalid"):
                 warnings.warn(

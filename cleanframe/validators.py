@@ -47,21 +47,48 @@ def validate_dataframe(df: pd.DataFrame, df_rule: DataFrameRule, report: list[st
         if df_rule.cross_validations:
             for check in df_rule.cross_validations:
                 try:
+                    action = check.get("action", "warn")  # default to warning
+                    invalid_mask = None
+
                     if check.get("type") == "comparison":
                         cond = check["condition"]
-                        if not df.eval(cond).all():
-                            log_warning(f"Comparison check failed: {cond}", report)
+                        mask = df.eval(cond)
+                        invalid_mask = ~mask
+
+                        if invalid_mask.any():
+                            if action == "drop":
+                                df = df.loc[mask].copy()
+                                log_info(f"Dropped {invalid_mask.sum()} row(s) failing comparison: {cond}", report)
+                            else:
+                                log_warning(f"Comparison check failed: {cond}", report)
 
                     elif check.get("type") == "aggregate":
                         agg_check = check["check"]
-                        if not eval(agg_check):
-                            log_warning(f"Aggregate check failed: {agg_check}", report)
+                        result = eval(agg_check, {}, {"df": df})
+                        if not result:
+                            if action == "drop":
+                                # Aggregate checks don't identify specific rows, so we can't drop selectively
+                                log_warning(f"Aggregate check failed and cannot drop rows: {agg_check}", report)
+                            else:
+                                log_warning(f"Aggregate check failed: {agg_check}", report)
 
                     elif check.get("type") == "conditional":
                         if_cond = df.eval(check["if"])
                         then_cond = df.eval(check["then"])
-                        if not then_cond[if_cond].all():
-                            log_warning(f"Conditional check failed: If ({check['if']}) then ({check['then']})", report)
+                        invalid_mask = if_cond & ~then_cond
+
+                        if invalid_mask.any():
+                            if action == "drop":
+                                df = df.loc[~invalid_mask].copy()
+                                log_info(
+                                    f"Dropped {invalid_mask.sum()} row(s) failing conditional: If ({check['if']}) then ({check['then']})",
+                                    report,
+                                )
+                            else:
+                                log_warning(
+                                    f"Conditional check failed: If ({check['if']}) then ({check['then']})",
+                                    report,
+                                )
 
                 except Exception as e:
                     log_error(f"Error evaluating cross-validation {check}: {e}", report)
@@ -70,6 +97,7 @@ def validate_dataframe(df: pd.DataFrame, df_rule: DataFrameRule, report: list[st
         log_error(f"Unexpected error in DataFrame validation: {e}", report)
 
     return df
+
 
 def validate_column(df: pd.DataFrame, col: str, rule: ColumnRule, report: list[str]) -> tuple[pd.DataFrame, pd.Series]:
     rows_to_drop = pd.Series(False, index=df.index)
