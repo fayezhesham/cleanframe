@@ -1,0 +1,246 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cleanframe: Lightweight Dataframe Cleaning &amp; Validation &mdash; cleanframe 0.2.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=6ffd866b"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Reference" href="api.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            cleanframe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">cleanframe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><cite>cleanframe</cite>: Lightweight Dataframe Cleaning &amp; Validation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="cleanframe-lightweight-dataframe-cleaning-validation">
+<h1><cite>cleanframe</cite>: Lightweight Dataframe Cleaning &amp; Validation<a class="headerlink" href="#cleanframe-lightweight-dataframe-cleaning-validation" title="Link to this heading"></a></h1>
+<p><cite>cleanframe</cite> is a lightweight Python library designed to streamline the process of cleaning and validating dataframes using a simple, schema-based approach. Define your data’s expected structure and properties, and let <cite>cleanframe</cite> handle the rest, providing a clean dataframe and a detailed report of any issues found.</p>
+<section id="features">
+<h2>Features<a class="headerlink" href="#features" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Schema-based Validation</strong>: Define your data’s structure, rules, and constraints in a simple Python dictionary.</p></li>
+<li><p><strong>Comprehensive Reporting</strong>: Get a detailed report of all validation issues, including which columns or rows were affected.</p></li>
+<li><p><strong>Automatic Cleaning</strong>: Automatically drop or fill rows that don’t conform to your schema.</p></li>
+<li><p><strong>Lightweight &amp; Simple</strong>: Designed for ease of use in notebooks, production pipelines, or general data ingestion tasks.</p></li>
+<li><p><strong>Cross-Validation</strong>: Perform complex checks on your data, like ensuring one column is a function of others.</p></li>
+</ul>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
+<p>You can install <cite>cleanframe</cite> directly from PyPI using <cite>pip</cite>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>cleanframe
+</pre></div>
+</div>
+</section>
+<section id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading"></a></h2>
+<p>Get started in just a few lines of code. The following example demonstrates how to define a schema, validate a sample dataframe, and inspect the results.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">cleanframe.data</span> <span class="kn">import</span> <span class="n">sample_data</span>
+<span class="kn">from</span> <span class="nn">cleanframe</span> <span class="kn">import</span> <span class="n">clean_and_validate</span><span class="p">,</span> <span class="n">Schema</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="c1"># 1. Load your dataframe</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">sample_data</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Original DataFrame shape:&quot;</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="c1"># 2. Define your schema using column and dataframe rules</span>
+<span class="n">column_rules</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;transaction_id&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;dtype&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;regex&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;^TXN_\d</span><span class="si">{7}</span><span class="s1">$&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;allow_null&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s1">&#39;drop_if_invalid&#39;</span><span class="p">:</span> <span class="kc">True</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;customer_id&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;dtype&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;regex&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s1">&#39;^CUST_\d</span><span class="si">{2}</span><span class="s1">$&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;allow_null&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s1">&#39;drop_if_invalid&#39;</span><span class="p">:</span> <span class="kc">True</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;category&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;dtype&#39;</span><span class="p">:</span> <span class="s1">&#39;category&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;allowed_values&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Patisserie&#39;</span><span class="p">,</span> <span class="s1">&#39;Milk Products&#39;</span><span class="p">,</span> <span class="s1">&#39;Butchers&#39;</span><span class="p">,</span> <span class="s1">&#39;Beverages&#39;</span><span class="p">,</span> <span class="s1">&#39;Food&#39;</span><span class="p">,</span> <span class="s1">&#39;Computers and electric accessories&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;allow_null&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s1">&#39;drop_if_invalid&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;fillna&#39;</span><span class="p">:</span> <span class="s1">&#39;Other&#39;</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;price_per_unit&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;dtype&#39;</span><span class="p">:</span> <span class="s1">&#39;float&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;min&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;max&#39;</span><span class="p">:</span> <span class="mi">10000</span><span class="p">,</span>
+        <span class="s1">&#39;allow_null&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s1">&#39;drop_if_invalid&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;fillna&#39;</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;quantity&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;dtype&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;min&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s1">&#39;max&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="s1">&#39;allow_null&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s1">&#39;drop_if_invalid&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;fillna&#39;</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;total_spent&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;dtype&#39;</span><span class="p">:</span> <span class="s1">&#39;float&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;min&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;max&#39;</span><span class="p">:</span> <span class="mi">1000000</span><span class="p">,</span>
+        <span class="s1">&#39;allow_null&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s1">&#39;drop_if_invalid&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;fillna&#39;</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;payment_method&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;dtype&#39;</span><span class="p">:</span> <span class="s1">&#39;category&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;allowed_values&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Digital Wallet&#39;</span><span class="p">,</span> <span class="s1">&#39;Credit Card&#39;</span><span class="p">,</span> <span class="s1">&#39;Cash&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;allow_null&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s1">&#39;drop_if_invalid&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;fillna&#39;</span><span class="p">:</span> <span class="s1">&#39;Other&#39;</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;dtype&#39;</span><span class="p">:</span> <span class="s1">&#39;category&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;allowed_values&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Online&#39;</span><span class="p">,</span> <span class="s1">&#39;In-store&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;allow_null&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s1">&#39;drop_if_invalid&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;fillna&#39;</span><span class="p">:</span> <span class="s1">&#39;Other&#39;</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;transactoin_date&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;dtype&#39;</span><span class="p">:</span> <span class="s1">&#39;datetime&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;allow_null&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s1">&#39;drop_if_invalid&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;max&#39;</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;discount_applied&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;dtype&#39;</span><span class="p">:</span> <span class="s1">&#39;boolean&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;allow_null&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s1">&#39;drop_if_invalid&#39;</span><span class="p">:</span> <span class="kc">True</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">dataframe_rule</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;min_rows&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;unique_keys&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;transaction_id&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;no_duplicates&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">&quot;cross_validations&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;comparison&quot;</span><span class="p">,</span> <span class="s2">&quot;condition&quot;</span><span class="p">:</span> <span class="s2">&quot;total_spent == price_per_unit * quantity&quot;</span><span class="p">,</span> <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;drop&quot;</span><span class="p">}]</span>
+<span class="p">}</span>
+
+<span class="n">schema</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span><span class="n">rules</span><span class="o">=</span><span class="n">column_rules</span><span class="p">,</span> <span class="n">dataframe_rule</span><span class="o">=</span><span class="n">dataframe_rule</span><span class="p">)</span>
+
+<span class="c1"># 3. Clean and validate your data</span>
+<span class="n">cleaned_df</span><span class="p">,</span> <span class="n">report</span> <span class="o">=</span> <span class="n">clean_and_validate</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">schema</span><span class="p">)</span>
+
+<span class="c1"># 4. View the report and the cleaned dataframe</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Validation Report:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Cleaned DataFrame shape:&quot;</span><span class="p">,</span> <span class="n">cleaned_df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="schema-definition">
+<h2>Schema Definition<a class="headerlink" href="#schema-definition" title="Link to this heading"></a></h2>
+<p>The schema is a Python dictionary that defines the validation rules for your dataframe. It consists of two main parts:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">column_rules</span></code>: A dictionary where each key is a column name and the value is a dictionary of rules for that column (e.g., <cite>dtype</cite>, <cite>min</cite>, <cite>max</cite>, <cite>regex</cite>, <cite>allowed_values</cite>, <cite>allow_null</cite>, <cite>fillna</cite>, and <cite>drop_if_invalid</cite>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dataframe_rule</span></code>: A dictionary for rules that apply to the entire dataframe (e.g., <cite>min_rows</cite>, <cite>unique_keys</cite>, <cite>no_duplicates</cite>, <cite>cross_validations</cite>).</p></li>
+</ul>
+<p>This structure allows for granular control over every aspect of your data’s quality.</p>
+</section>
+<section id="contributing">
+<h2>Contributing<a class="headerlink" href="#contributing" title="Link to this heading"></a></h2>
+<p>We welcome contributions! If you find a bug or have a suggestion, please open an issue or submit a pull request on our GitHub repository.</p>
+</section>
+<section id="license">
+<h2>License<a class="headerlink" href="#license" title="Link to this heading"></a></h2>
+<p>This project is licensed under the MIT License.</p>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Fayez Hesham.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

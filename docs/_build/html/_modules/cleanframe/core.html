@@ -1,0 +1,191 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cleanframe.core &mdash; cleanframe 0.2.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=6ffd866b"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            cleanframe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">cleanframe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">cleanframe.core</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for cleanframe.core</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">.schema</span> <span class="kn">import</span> <span class="n">Schema</span>
+<span class="kn">from</span> <span class="nn">.reporting</span> <span class="kn">import</span> <span class="n">log_info</span><span class="p">,</span> <span class="n">log_warning</span>
+<span class="kn">from</span> <span class="nn">.validators</span> <span class="kn">import</span> <span class="n">validate_column</span><span class="p">,</span> <span class="n">validate_dataframe</span>
+
+<div class="viewcode-block" id="clean_and_validate">
+<a class="viewcode-back" href="../../api.html#cleanframe.clean_and_validate">[docs]</a>
+<span class="k">def</span> <span class="nf">clean_and_validate</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">schema</span><span class="p">:</span> <span class="n">Schema</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cleans and validates a pandas DataFrame based on a user-defined schema.</span>
+
+<span class="sd">    This is the core function of the library. It applies a series of cleaning and </span>
+<span class="sd">    validation rules specified in a `Schema` object, including checks for the </span>
+<span class="sd">    entire DataFrame and individual columns. It returns a cleaned DataFrame and </span>
+<span class="sd">    a detailed report of all actions taken.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df (pd.DataFrame): The pandas DataFrame to be cleaned and validated.</span>
+<span class="sd">        schema (Schema): A `Schema` object that defines the validation and </span>
+<span class="sd">            cleaning rules. It can be created from a `Schema` instance or a </span>
+<span class="sd">            dictionary.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple[pd.DataFrame, list[str]]: A tuple containing:</span>
+<span class="sd">            - **pd.DataFrame**: The cleaned and validated DataFrame. Invalid rows </span>
+<span class="sd">              that fail validation with `drop_if_invalid=True` are removed.</span>
+<span class="sd">            - **list[str]**: A list of strings representing the report of all </span>
+<span class="sd">              cleaning and validation actions (e.g., warnings, info messages). </span>
+<span class="sd">              This list can be passed to `reporting.display_report` for a </span>
+<span class="sd">              nicely formatted output.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from pandas import DataFrame</span>
+<span class="sd">        &gt;&gt;&gt; from cleanframe import Schema</span>
+<span class="sd">        &gt;&gt;&gt; from cleanframe import clean_and_validate</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; data = {&#39;id&#39;: [1, 2, 3, 4],</span>
+<span class="sd">        ...         &#39;name&#39;: [&#39;Alice&#39;, &#39;Bob&#39;, &#39;Charlie&#39;, None],</span>
+<span class="sd">        ...         &#39;age&#39;: [25, 30, 18, 99],</span>
+<span class="sd">        ...         &#39;zip_code&#39;: [&#39;12345&#39;, &#39;abcde&#39;, &#39;67890&#39;, &#39;98765&#39;]}</span>
+<span class="sd">        &gt;&gt;&gt; df_to_clean = DataFrame(data)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Define a schema using a dictionary</span>
+<span class="sd">        &gt;&gt;&gt; my_schema = Schema(</span>
+<span class="sd">        ...     rules={</span>
+<span class="sd">        ...         &#39;id&#39;: {&#39;dtype&#39;: &#39;int&#39;, &#39;unique&#39;: True},</span>
+<span class="sd">        ...         &#39;name&#39;: {&#39;dtype&#39;: &#39;string&#39;, &#39;allow_null&#39;: False, &#39;fillna&#39;: &#39;Unknown&#39;},</span>
+<span class="sd">        ...         &#39;age&#39;: {&#39;dtype&#39;: &#39;int&#39;, &#39;min&#39;: 18, &#39;max&#39;: 60, &#39;drop_if_invalid&#39;: True},</span>
+<span class="sd">        ...         &#39;zip_code&#39;: {&#39;dtype&#39;: &#39;string&#39;, &#39;regex&#39;: r&#39;^\d{5}$&#39;},</span>
+<span class="sd">        ...     },</span>
+<span class="sd">        ...     dataframe_rule={&#39;min_rows&#39;: 3, &#39;no_duplicates&#39;: True}</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; cleaned_df, report = clean_and_validate(df_to_clean, my_schema)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; print(cleaned_df)</span>
+<span class="sd">           id     name  age zip_code</span>
+<span class="sd">        0   1    Alice   25    12345</span>
+<span class="sd">        1   2      Bob   30    abcde</span>
+<span class="sd">        2   3  Charlie   18    67890</span>
+<span class="sd">        &gt;&gt;&gt; # The report would contain the messages:</span>
+<span class="sd">        &gt;&gt;&gt; # &#39;Filled 1 null(s) in &#39;name&#39; with Unknown (strategy=Unknown).&#39;</span>
+<span class="sd">        &gt;&gt;&gt; # &#39;1 value(s) in &#39;age&#39; above max marked for drop.&#39;</span>
+<span class="sd">        &gt;&gt;&gt; # &#39;Replaced 1 value(s) in &#39;zip_code&#39; failing regex with None.&#39;</span>
+<span class="sd">        &gt;&gt;&gt; # &#39;Dropped 1 row(s) due to validation.&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">rows_to_drop</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">df_cleaned</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">report</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># 1. Validate DataFrame-level rules</span>
+    <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">dataframe_rule</span><span class="p">:</span>
+        <span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">validate_dataframe</span><span class="p">(</span><span class="n">df_cleaned</span><span class="p">,</span> <span class="n">schema</span><span class="o">.</span><span class="n">dataframe_rule</span><span class="p">,</span> <span class="n">report</span><span class="p">)</span>
+
+    <span class="c1"># 2. Validate columns</span>
+    <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">schema</span><span class="o">.</span><span class="n">rules</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df_cleaned</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">log_warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Column &#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&#39; is missing from DataFrame.&quot;</span><span class="p">,</span> <span class="n">report</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="n">df_cleaned</span><span class="p">,</span> <span class="n">updated_rows_to_drop</span> <span class="o">=</span> <span class="n">validate_column</span><span class="p">(</span><span class="n">df_cleaned</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">rule</span><span class="p">,</span> <span class="n">report</span><span class="p">)</span>
+        <span class="n">rows_to_drop</span> <span class="o">|=</span> <span class="n">updated_rows_to_drop</span>
+
+    <span class="c1"># 3. Drop invalid rows</span>
+    <span class="k">if</span> <span class="n">rows_to_drop</span><span class="o">.</span><span class="n">sum</span><span class="p">():</span>
+        <span class="n">log_info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dropping </span><span class="si">{</span><span class="n">rows_to_drop</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">}</span><span class="s2"> row(s) due to validation.&quot;</span><span class="p">,</span> <span class="n">report</span><span class="p">)</span>
+        <span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">df_cleaned</span><span class="p">[</span><span class="o">~</span><span class="n">rows_to_drop</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">df_cleaned</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">report</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Fayez Hesham.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
