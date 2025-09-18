@@ -1,1 +1,3 @@
 recursive-include cleanframe/sample_data *.csv
+include README.md
+include LICENSE
