@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: cleanframe
-Version: 0.2.3
+Version: 0.2.4
 Summary: A Python library for cleaning and validating pandas DataFrames.
 Home-page: https://github.com/fayezhesham/cleanframe
 Author: Fayez Hesham
@@ -141,7 +141,7 @@ dataframe_rule = {
     "min_rows": 1,
     "unique_keys": ["transaction_id"],
     "no_duplicates": True,
-    "cross_validations": [{"type": "comparison", "condition": "total_spent == price_per_unit * quantity"}]
+    "cross_validations": [{"type": "comparison", "condition": "total_spent == price_per_unit * quantity", "action": "drop"}]
 }
 
 schema = Schema(rules = column_rules, dataframe_rule = dataframe_rule)

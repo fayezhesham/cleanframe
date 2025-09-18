@@ -13,7 +13,31 @@ from .utils import apply_custom_validator
 
 
 def validate_dataframe(df: pd.DataFrame, df_rule: DataFrameRule, report: list[str]) -> pd.DataFrame:
-    """Validate entire DataFrame according to DataFrameRule."""
+    """Validates an entire DataFrame against a set of DataFrame-level rules.
+
+    This function applies various checks and cleaning operations that relate to the
+    structure and overall state of the DataFrame, as defined by `DataFrameRule`.
+
+    Args:
+        df (pd.DataFrame): The DataFrame to validate.
+        df_rule (DataFrameRule): The object containing the DataFrame-wide rules.
+        report (list[str]): The list to append validation log messages to.
+
+    Returns:
+        pd.DataFrame: The validated DataFrame, with any modifications applied
+            (e.g., dropped rows, removed duplicates).
+
+    How it Works:
+        The function applies a sequence of checks:
+        1. **Row count:** Logs a warning if the DataFrame's row count is outside of the `min_rows` or `max_rows` range.
+        2. **Full duplicates:** Removes exact duplicate rows if `no_duplicates` is True.
+        3. **Unique keys:** Logs a warning if duplicates are found within the specified `unique_keys` subset.
+        4. **Expected columns:** Logs warnings for any missing or unexpected columns based on `expected_columns`.
+        5. **Cross-validations:** Iterates through `cross_validations` rules.
+           - **'comparison' type:** Evaluates a boolean condition using `df.eval()` and can drop rows that fail.
+           - **'aggregate' type:** Evaluates an aggregate check on the entire DataFrame. It only logs a warning and cannot drop rows.
+           - **'conditional' type:** Evaluates a `then` condition for rows that satisfy an `if` condition. It can drop rows that fail the check.
+    """
     try:
         # Row count checks
         if df_rule.min_rows is not None and len(df) < df_rule.min_rows:
@@ -100,6 +124,31 @@ def validate_dataframe(df: pd.DataFrame, df_rule: DataFrameRule, report: list[st
 
 
 def validate_column(df: pd.DataFrame, col: str, rule: ColumnRule, report: list[str]) -> tuple[pd.DataFrame, pd.Series]:
+    """Validates and cleans a single DataFrame column based on a set of rules.
+
+    This function is a pipeline that applies a series of cleaning and validation steps
+    to a specific column, accumulating rows to be dropped.
+
+    Args:
+        df (pd.DataFrame): The DataFrame containing the column to be validated.
+        col (str): The name of the column to validate.
+        rule (ColumnRule): The object containing the column-specific rules.
+        report (list[str]): The list to append validation log messages to.
+
+    Returns:
+        Tuple[pd.DataFrame, pd.Series]: A tuple containing:
+            - The DataFrame with any in-place cleaning applied (e.g., filled nulls, type conversions).
+            - A boolean Series of rows marked for removal due to validation failures.
+
+    How it Works:
+        The function sequentially applies validation rules and combines the results:
+        1. **Null handling:** Replaces or marks null values for dropping based on `allow_null` and `fillna`.
+        2. **Regex validation:** Checks for a valid pattern and replaces or drops non-matching values.
+        3. **Type conversion:** Converts the column to the specified `dtype`. Rows that fail conversion are marked for dropping.
+        4. **Constraint validation:** Applies `min`, `max`, and `allowed_values` rules. Rows that fail are marked for dropping.
+        5. **Custom validation:** Applies the user-defined `custom_validator` function.
+        6. **Uniqueness:** Checks for and handles duplicate values based on the `unique` and `resolve_duplicates` rules.
+    """
     rows_to_drop = pd.Series(False, index=df.index)
 
     try:

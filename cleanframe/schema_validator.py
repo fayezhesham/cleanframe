@@ -8,8 +8,11 @@ class SchemaValidationError(Exception):
 
 class SchemaValidator:
     """
-    Validates column and dataframe schema definitions for logical consistency
-    before running data validation.
+    A validator class to ensure a schema definition is logically consistent.
+
+    This class performs static analysis on the schema's rules before any data is
+    processed. It checks for common logical inconsistencies, such as applying a 
+    regex to a numeric column or defining contradictory row limits.
     """
 
     NUMERIC_DTYPES = {"int", "float"}
@@ -19,14 +22,23 @@ class SchemaValidator:
     @classmethod
     def validate_schema(cls, schema: dict, dataframe_rules: dict = None):
         """
-        Validate both column-level and dataframe-level schema definitions.
+        Validates both column-level and dataframe-level schema definitions for logical consistency.
+
+        This method performs a series of checks on the schema dictionary to ensure that the
+        defined rules are valid and can be applied correctly to a DataFrame.
 
         Args:
-            schema (dict): Column-level schema definition.
-            dataframe_rules (dict): Optional dataframe-level schema definition.
+            schema (dict): A dictionary where keys are column names and values are
+                dictionaries of `ColumnRule` parameters.
+            dataframe_rules (dict, optional): A dictionary of `DataFrameRule` parameters.
 
         Raises:
-            SchemaValidationError: If schema definitions are invalid.
+            SchemaValidationError: If any schema definition is invalid. This includes
+                issues such as:
+                - Missing a required `dtype` for a column.
+                - Using `regex` on a non-string column.
+                - Using `min` or `max` on a non-numeric or non-date column.
+                - Using an invalid value for the 'action' parameter.
         """
         if not isinstance(schema, dict):
             raise SchemaValidationError("Schema must be a dictionary.")
@@ -74,7 +86,12 @@ class SchemaValidator:
 
     @classmethod
     def _validate_dataframe_rules(cls, dataframe_rules: dict):
-        """Validate dataframe-wide schema definitions."""
+        """
+        Validates dataframe-wide schema definitions.
+
+        This helper method checks for logical inconsistencies in the rules that apply
+        to the entire DataFrame.
+        """
         if not isinstance(dataframe_rules, dict):
             raise SchemaValidationError("Dataframe rules must be a dictionary.")
 
@@ -87,7 +104,6 @@ class SchemaValidator:
                 UserWarning
             )
 
-        # Add more dataframe-level validations here
-        # Example: Ensure unique ID column is specified
+
         if dataframe_rules.get("unique_id") and not isinstance(dataframe_rules["unique_id"], str):
             raise SchemaValidationError("'unique_id' in dataframe rules must be a string representing a column name.")

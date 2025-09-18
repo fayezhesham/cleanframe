@@ -3,6 +3,24 @@ from .schema import ColumnRule
 from .reporting import log_info, log_warning, log_error
 
 def convert_dtype(df: pd.DataFrame, col: str, rule: ColumnRule, report: list[str]) -> tuple[pd.DataFrame, pd.Series]:
+    """Converts a column's data type and handles values that fail conversion.
+
+    This function attempts to cast a column to the `dtype` specified in the rule.
+    It uses pandas' robust type conversion functions (`to_numeric`, `to_datetime`)
+    to handle non-coercible values.
+
+    Args:
+        df (pd.DataFrame): The DataFrame containing the column to be converted.
+        col (str): The name of the column to convert.
+        rule (ColumnRule): The rule object containing the `dtype` definition.
+        report (list[str]): The list to append conversion log messages to.
+
+    Returns:
+        Tuple[pd.DataFrame, pd.Series]: A tuple containing:
+            - The DataFrame with the column converted to the new data type.
+            - A boolean Series indicating which rows failed conversion and are
+              marked for removal.
+    """
     rows_to_drop = pd.Series(False, index=df.index)
 
     if rule.dtype:
@@ -28,6 +46,23 @@ def convert_dtype(df: pd.DataFrame, col: str, rule: ColumnRule, report: list[str
     return df, rows_to_drop
 
 def apply_constraints(df: pd.DataFrame, col: str, rule: ColumnRule, report: list[str]) -> tuple[pd.DataFrame, pd.Series]:
+    """Applies `min`, `max`, and `allowed_values` constraints to a column.
+
+    This function checks a column's values against the defined constraints.
+    It either replaces invalid values with `fillna` or marks the corresponding
+    rows for removal based on the `drop_if_invalid` rule.
+
+    Args:
+        df (pd.DataFrame): The DataFrame containing the column to check.
+        col (str): The name of the column.
+        rule (ColumnRule): The rule object containing the constraints.
+        report (list[str]): The list to append validation log messages to.
+
+    Returns:
+        Tuple[pd.DataFrame, pd.Series]: A tuple containing:
+            - The DataFrame with any in-place cleaning applied.
+            - A boolean Series indicating which rows are marked for removal.
+    """
     rows_to_drop = pd.Series(False, index=df.index)
 
     if rule.min is not None:
